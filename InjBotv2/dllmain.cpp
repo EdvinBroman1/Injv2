@@ -5,7 +5,7 @@
 DWORD WINAPI InjectThread(HMODULE hModule) {
 
    // Print HeaderText = Print("BAD EXAMPLE", 10, 10, 190, 220, 90, 2); Don't do this, allocates a pointer on stack and gets cleared after function exits. 
-   //In other words inserting into the print list resulting in an iteration over a list of invalid Print Pointers. Instead allocate on the stack.
+   //In other words inserting into the print list resulting in an iteration over a list of invalid Print Pointers. Instead allocate on the heap.
 
     Print* HeaderTxt = new Print("This is InjBot", 100, 100, 155, 155, 255, 2);
    //Changing GUI elements is really easy by simply altering the member variables in the instances.
