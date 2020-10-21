@@ -11,4 +11,8 @@ DWORD HookAddress::HookOptionsButtonCreate = Client::BaseAddress + 0x1719E2;
 
 DWORD HookAddress::HookContextFiller = 0x5FC80;
 
+
 #pragma endregion Hooks
+
+
+DWORD Self::LocalPlayer = 0x23FE40;

@@ -6,13 +6,16 @@
 Player::Player() :
     Skills(reinterpret_cast<PlayerSkills*>(Client::BaseAddress + Self::LocalPlayer)),
     creature_id(*reinterpret_cast<int*>(Client::BaseAddress + Self::LocalPlayer + PlayerOffsets::CreatureID)),
-    Pos(reinterpret_cast<Position*>(this + PlayerOffsets::PositionX))
+    PlayerBase(getPlayerPointer(creature_id)),
+    Name(reinterpret_cast<char*>(PlayerBase + 0x4)),
+    Pos(reinterpret_cast<Position*>(PlayerBase + PlayerOffsets::PositionX))
 {
 }
 
-std::string Player::ToString() {
+std::string Player::ToString() const {
     return "Name: " + this->Name + "\nLevel: " + std::to_string(this->Skills->Level) + "\nHealth: " + std::to_string(this->Skills->Health) + " / " + std::to_string(this->Skills->MaxHealth) + "\n";
 }
+
 
 
 void Player::Say(const std::string& msg, int id) {
@@ -46,15 +49,16 @@ bool Player::WalkTo(Position* newPos) const
 }
 
 
-Player* getPlayerPointer(int creature_id)
+DWORD getPlayerPointer(int creature_id)
 {
-    intptr_t function_adr = Client::BaseAddress + 0x5E720;
-    Player* pointr = nullptr;
+    DWORD function_adr = Client::BaseAddress + 0x5E720;
 
-    using getPlayerPtr = Player*(cdecl*)(int CreatureID);
+    DWORD pPlayer = 0x0;
+
+    using getPlayerPtr = DWORD(cdecl*)(int CreatureID);
     getPlayerPtr getPlayer = (getPlayerPtr)(function_adr);
 
-    pointr = getPlayer(creature_id);
+    pPlayer = getPlayer(creature_id);
 
-    return pointr;
+    return pPlayer;
 }

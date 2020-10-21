@@ -6,7 +6,7 @@ void PrintAllLabels();
 
 class Print {
 public:
-    const char* text;
+    std::string text;
     int x, y, r, g, b, font, alignment;
 
     Print(const std::string& str, int X, int Y, int B, int G, int R, int FONT);

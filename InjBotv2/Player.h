@@ -1,8 +1,7 @@
 #pragma once
 #include "Position.h"
+#include "Addresses.h"
 #include <string>
-
-intptr_t getPlayerPointer(int creature_id);
 
 
 struct PlayerSkills {
@@ -24,7 +23,6 @@ public:
 	int Experience;
 	int MaxHealth;
 	int	Health;
-
 };
 
 struct PlayerOffsets {
@@ -37,19 +35,21 @@ public:
 
 class Player {
 public:
+	
 	int creature_id;
-	uint32_t PlayerBase;
+	DWORD PlayerBase;
+	std::string Name;
 
 	PlayerSkills* Skills;
 	Position* Pos;
 
-	std::string Name;
 
 	void Say(const std::string& msg, int id);
-	bool WalkTo(Position* newPos) const;
 
-	std::string ToString();
+	bool WalkTo(Position* newPos) const;
+	std::string ToString() const;
+
 	Player();
 };
 
-
+DWORD getPlayerPointer(int creature_id = *reinterpret_cast<int*>(Client::BaseAddress + Self::LocalPlayer + PlayerOffsets::CreatureID));
