@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 void PrintAllLabels();
+void OpenChannel(const char* ChannelName, int ChannelID);
 
 class Print {
 public:

@@ -2,8 +2,8 @@
 
 using TibiaPrintText = void(_cdecl*)(int vr, int X, int Y, int Font, int Rgb_r, int Rgb_g, int Rgb_b, const char* Text, int Alignment);
 
-uint32_t TibiaTextFunctionAddress = Client::BaseAddress + 0xB4DD0;
-uint32_t PrintTextFunctionAddy = Client::BaseAddress + 0x122A90;
+DWORD TibiaTextFunctionAddress = Client::BaseAddress + 0xB4DD0;
+DWORD PrintTextFunctionAddy = Client::BaseAddress + 0x122A90;
 std::vector<Print*> Prints = std::vector<Print*>();
 TibiaPrintText TibiaTextPrint = (TibiaPrintText)(TibiaTextFunctionAddress);
 
@@ -26,4 +26,15 @@ void PrintAllLabels() {
 
 ContextMenuItem::ContextMenuItem(const char* txt, int eventid, const char* shortcut) : Text(txt), EventID(eventid), Shortcut(shortcut)
 {
+}
+	
+void OpenChannel(const char* ChannelName, int ChannelID) {
+	DWORD Createfunc = Client::BaseAddress + 0x55A40;
+	DWORD GuiPointer = *(DWORD*)(0x64F5C8);
+	DWORD pGuiChat = *(DWORD*)(GuiPointer + 0x40);
+
+	using CreateChannel = void(_fastcall*)(DWORD pGui, const char* Text, int recv, int send, int channelID, const char* text);
+	CreateChannel CC = (CreateChannel)(0x455A40);
+
+	CC(pGuiChat, ChannelName, 7, 0, ChannelID, ChannelName);
 }

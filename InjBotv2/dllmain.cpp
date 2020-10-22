@@ -16,6 +16,7 @@ DWORD WINAPI InjectThread(HMODULE hModule) {
 
 
     enable_hooks();
+    OpenChannel("InjectBot", 0x80);
 
 
     return 0;
