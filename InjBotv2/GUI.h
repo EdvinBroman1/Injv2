@@ -14,7 +14,7 @@ namespace GUI {
     }
 
     namespace Dialog {
-        void CreatePopup(const std::string& Title, int x, int y);
+        void CreatePopup(const std::string& Title, int x, int y, int sizeX, int sizeY);
     }
 }
 

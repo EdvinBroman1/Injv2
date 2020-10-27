@@ -45,33 +45,94 @@ void GUI::Chat::OpenChannel(const char* ChannelName, int ChannelID) {
 
 /* GUI Regarding Dialogs */
 
-    DWORD CreateElement() {
-        DWORD original = 0x5719E2;
-        DWORD Pointer = 0x0;
-        __asm {
-            push 0x38
-            call original
-            add esp, 0x4
-            mov Pointer, eax
-        }
-
-        return Pointer;
+DWORD CreateElement(UINT id) {
+    DWORD original = GUIAddress::CreateElement;
+    DWORD Pointer = 0x0;
+    __asm {
+        push id
+        call original
+        add esp, 0x4
+        mov Pointer, eax
     }
 
-    DWORD ConstructGuiElement(DWORD element) {
-        DWORD Pass = 0x004CCBA0;
-        DWORD original = 0x00485850;
+    return Pointer;
+}
 
-        __asm {
-            mov ecx, element
-            mov edx, 0
-            push Pass
-            call original
-        }
+void PrintElement(DWORD element, DWORD pGUI, int x, int y) {
+    DWORD Print = 0x4C45F0;
+    __asm {
+        push y
+        push x
+        push element
+        mov ecx, pGUI
+        mov edx, 0
+        call Print
+    }
+}
+
+DWORD CreateButton(DWORD pGUI, const char* txt, int EventID) {
+    DWORD pButton = CreateElement(0x7C);
+    //SetEventId(pButton, 0x194); TODO
+    DWORD original = 0x47C650;
+    DWORD Setup = 0x4C0C60;
+    DWORD Btn = 0x0;
+    __asm {
+        mov ecx, pButton
+        mov edx, EventID
+        push 0
+        push EventID
+        push pGUI
+        push 13
+        push 12
+        push txt
+        push 80
+        push 80
+        call original
+        mov Btn, eax
+    }
+    __asm {
+        push pButton
+        mov ecx, pGUI
+        mov edx, 4
+        CALL Setup
+    }
+    PrintElement(Btn, pGUI, 50, 50);
+}
+
+DWORD SetDialogSize(DWORD Dialog, int x, int y) {
+    DWORD original = 0x4C09E0;
+    __asm {
+        mov ecx, Dialog
+        push y
+        push x
+        call original
+    }
+
+}
+
+void UnknownFunc(DWORD gui) { // Sets element ptr values ( used for later comparisions )
+    DWORD original = 0x4B7550;
+    __asm {
+        mov edx, 0
+        mov ecx, gui
+        call original
+    }
+}
+
+
+    void ConstructGuiElement(DWORD element, int sizeX, int sizeY) {
+        DWORD Pass = 0x4CCBA0;
+        DWORD original = 0x485850;
+        DWORD original1 = 0x491140;
+        UnknownFunc(element);
+        SetDialogSize(element, sizeX, sizeY);
+
+        CreateButton(element, "Test", 0x194);
 
     }
+
     DWORD CreateElementPointer(DWORD otherPtr) {
-        DWORD original = 0x5719E2;
+        DWORD original = GUIAddress::CreateElement;
         DWORD Pointer = 0x0;
         __asm {
             push 0xC4
@@ -100,7 +161,7 @@ void GUI::Chat::OpenChannel(const char* ChannelName, int ChannelID) {
     }
 
     void SetPopupPlacement(DWORD Popup, int x, int y) {
-        DWORD original = 0x00455A10;
+        DWORD original = 0x455A10;
         __asm {
             push y
             push x
@@ -110,14 +171,26 @@ void GUI::Chat::OpenChannel(const char* ChannelName, int ChannelID) {
     }
 
 
-   void GUI::Dialog::CreatePopup(const std::string& Title, int x, int y) {
+    void SetEventId(DWORD element, UINT EventID) {
+        DWORD original = 0x4B76C0;
+        throw ERROR_UNHANDLED_EXCEPTION;
+        __asm {
+
+        }
+        
+    }
+
+
+
+
+   void GUI::Dialog::CreatePopup(const std::string& Title, int x, int y, int sizeX, int sizeY) {
 
         //*Addresses
         DWORD* CurrentlySelectedGUIElement = (DWORD*)0x64F5C4;
         DWORD* GUI_SOMETHING_ID = (DWORD*)0x79CF88;
 
-        DWORD ElementContent = CreateElement();
-        ConstructGuiElement(ElementContent); // Decorates The GUI element with various labels & buttons depending on what ID is the GuiElement Ptr
+        DWORD ElementContent = CreateElement(0x38);
+        ConstructGuiElement(ElementContent, sizeX, sizeY); // Decorates The GUI element with various labels & buttons depending on what ID is the GuiElement Ptr
 
         DWORD GuiBox = CreateElementPointer(ElementContent); // Create a GuiBox from the template...
 

@@ -17,3 +17,6 @@ DWORD HookAddress::DialogChooser = Client::BaseAddress + 0x5A72F;
 
 
 DWORD Self::LocalPlayer = 0x23FE40;
+
+
+DWORD GUIAddress::CreateElement = Client::BaseAddress + 0x1719E2;

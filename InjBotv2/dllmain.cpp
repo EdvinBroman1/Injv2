@@ -15,7 +15,11 @@ DWORD WINAPI InjectThread(HMODULE hModule) {
         }
         if (GetAsyncKeyState(VK_NUMPAD8) & 1) {
             Position* p = Tibia::GetCenterOfWindow();
-            GUI::Dialog::CreatePopup("InjBotV2" , p->X, p->Y);
+            GUI::Dialog::CreatePopup("InjBotV2" , p->X, p->Y, 400, 400);
+        }
+        if (GetAsyncKeyState(VK_NUMPAD7) & 1) {
+            Position* p = Tibia::GetCenterOfWindow();
+            GUI::Dialog::CreatePopup("Healer", p->X, p->Y, 200, 200);
         }
         if (GetAsyncKeyState(VK_NUMPAD5) & 1) {
             break;

@@ -21,3 +21,8 @@ class Self {
 public:
 	static DWORD LocalPlayer;
 };
+
+class GUIAddress {
+public:
+	static DWORD CreateElement;
+};
