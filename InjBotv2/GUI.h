@@ -2,8 +2,22 @@
 #include "Addresses.h"
 #include <iostream>
 #include <vector>
+#include "Position.h"
 void PrintAllLabels();
-void OpenChannel(const char* ChannelName, int ChannelID);
+namespace Tibia {
+    Position* GetCenterOfWindow();
+}
+
+namespace GUI {
+    namespace Chat {
+        void OpenChannel(const char* ChannelName, int ChannelID);
+    }
+
+    namespace Dialog {
+        void CreatePopup(const std::string& Title, int x, int y);
+    }
+}
+
 
 class Print {
 public:

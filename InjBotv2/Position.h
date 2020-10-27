@@ -2,9 +2,7 @@
 struct Position
 {
 public:
-	int X;
-	int Y;
-	int Z;
+	int X, Y, Z;
 	Position(int x, int y, int z);
 };
 

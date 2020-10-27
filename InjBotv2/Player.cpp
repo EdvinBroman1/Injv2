@@ -20,10 +20,10 @@ std::string Player::ToString() const {
 
 void Player::Say(const std::string& msg, int id) {
 
-    using sayFunc = void(cdecl*)(std::string mMsg, int ID);
+    using sayFunc = void(cdecl*)(int ID, const char* mMsg);
     sayFunc sF = (sayFunc)(Client::BaseAddress + 0x73F0);
 
-    sF(msg, id);
+    sF(id, msg.c_str());
 
 }
 

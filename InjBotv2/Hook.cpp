@@ -1,6 +1,6 @@
 #include "Hook.h"
 
-BOOL Hook(void* pTarget, void* ourFunct, int len)
+BOOL Hook(void* pTarget, void* ourFunct, int len, int Instruction)
 {
 
     if (len < 5) {
@@ -13,7 +13,7 @@ BOOL Hook(void* pTarget, void* ourFunct, int len)
     memset(pTarget, 0x90, len);
 
     DWORD relativeAddress = ((DWORD)ourFunct - (DWORD)pTarget) - 5;
-    *(BYTE*)pTarget = 0xE8; // E8 == call E9 == JMP
+    *(BYTE*)pTarget = Instruction; // E8 == call E9 == JMP
     *(DWORD*)((DWORD)pTarget + 1) = relativeAddress;
 
     DWORD temp;
@@ -25,7 +25,7 @@ BOOL Hook(void* pTarget, void* ourFunct, int len)
 void PrintHook()
 {
 
-    Hook((void*)(Client::BaseAddress + HookAddress::HookPrintAddy), PrintAllLabels, 5);
+    Hook((void*)(Client::BaseAddress + HookAddress::HookPrintAddy), PrintAllLabels, 5, 0xE8);
 }
 
 void enable_hooks()

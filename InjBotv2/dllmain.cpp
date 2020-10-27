@@ -1,25 +1,29 @@
 #include "Hook.h"
 #include "Player.h"
+#include <memory>
+
+
 
 
 DWORD WINAPI InjectThread(HMODULE hModule) {
 
-    // Print HeaderText = Print("BAD EXAMPLE", 10, 10, 190, 220, 90, 2); Don't do this, allocates a pointer on stack and gets cleared after function exits. 
-    // In other words inserting into the print list resulting in an iteration over a list of invalid Print Pointers. Instead allocate on the heap.
-
-    Print* HeaderTxt = new Print("This is InjBot", 100, 100, 155, 155, 255, 2);
-    //Changing GUI elements is really easy by simply altering the member variables in the instances.
-
-    
-    Player* Me = new Player();
-    HeaderTxt->text = Me->ToString();
-
-
     enable_hooks();
-    OpenChannel("InjectBot", 0x80);
+    int y = 100;
+    while (true) {
+        if (GetAsyncKeyState(VK_NUMPAD2) & 1) {
+            GUI::Chat::OpenChannel("InjBotV2", 0x64);
+        }
+        if (GetAsyncKeyState(VK_NUMPAD8) & 1) {
+            Position* p = Tibia::GetCenterOfWindow();
+            GUI::Dialog::CreatePopup("InjBotV2" , p->X, p->Y);
+        }
+        if (GetAsyncKeyState(VK_NUMPAD5) & 1) {
+            break;
+        }
 
-
-    return 0;
+        Sleep(10); 
+    }
+    FreeLibraryAndExitThread(hModule, 0);
 }
 
 

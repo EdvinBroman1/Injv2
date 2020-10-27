@@ -13,6 +13,8 @@ public:
 	static DWORD HookContextAdd;
 	static DWORD HookContextMenuSwitch;
 	static DWORD HookOptionsButtonCreate;
+
+	static DWORD DialogChooser;
 };
 
 class Self {
