@@ -28,195 +28,178 @@ void PrintAllLabels() {
 ContextMenuItem::ContextMenuItem(const char* txt, int eventid, const char* shortcut) : Text(txt), EventID(eventid), Shortcut(shortcut)
 {
 }
-	
+
 /* GUI Regarding Chat */
 void GUI::Chat::OpenChannel(const char* ChannelName, int ChannelID) {
 
 	DWORD Createfunc = Client::BaseAddress + 0x55A40;
 	DWORD GuiPointer = *(DWORD*)(0x64F5C8);
 	DWORD pGuiChat = *(DWORD*)(GuiPointer + 0x40);
-    using OpenChannel = void(_fastcall*)(DWORD pGui, const char* channelname, int mode, int recv, int channelid, const char* ChannelName);
-    OpenChannel OC = (OpenChannel)(Createfunc);
-    OC(pGuiChat, ChannelName, 7, 0, 0x80, ChannelName);
+	using OpenChannel = void(_fastcall*)(DWORD pGui, const char* channelname, int mode, int recv, int channelid, const char* ChannelName);
+	OpenChannel OC = (OpenChannel)(Createfunc);
+	OC(pGuiChat, ChannelName, 7, 0, 0x80, ChannelName);
 }
 /* END GUI Regarding Chat */
 
 
 
 /* GUI Regarding Dialogs */
-
-DWORD CreateElement(UINT id) {
-    DWORD original = GUIAddress::CreateElement;
-    DWORD Pointer = 0x0;
-    __asm {
-        push id
-        call original
-        add esp, 0x4
-        mov Pointer, eax
-    }
-
-    return Pointer;
-}
+using CreateElementFunction = DWORD(_cdecl*)(UINT ID);
+CreateElementFunction CreateElement = (CreateElementFunction)(GUIAddress::CreateElement);
 
 void PrintElement(DWORD element, DWORD pGUI, int x, int y) {
-    DWORD Print = 0x4C45F0;
-    __asm {
-        push y
-        push x
-        push element
-        mov ecx, pGUI
-        mov edx, 0
-        call Print
-    }
+	DWORD Print = 0x4C45F0;
+	__asm {
+		push y
+		push x
+		push element
+		mov ecx, pGUI
+		mov edx, 0
+		call Print
+	}
 }
 
 DWORD CreateButton(DWORD pGUI, const char* txt, int EventID) {
-    DWORD pButton = CreateElement(0x7C);
-    //SetEventId(pButton, 0x194); TODO
-    DWORD original = 0x47C650;
-    DWORD Setup = 0x4C0C60;
-    DWORD Btn = 0x0;
-    __asm {
-        mov ecx, pButton
-        mov edx, EventID
-        push 0
-        push EventID
-        push pGUI
-        push 13
-        push 12
-        push txt
-        push 80
-        push 80
-        call original
-        mov Btn, eax
-    }
-    __asm {
-        push pButton
-        mov ecx, pGUI
-        mov edx, 4
-        CALL Setup
-    }
-    PrintElement(Btn, pGUI, 50, 50);
+	DWORD pButton = CreateElement(0x7C);
+	//SetEventId(pButton, 0x194); TODO
+	DWORD original = 0x47C650;
+	DWORD Setup = 0x4C0C60;
+	DWORD Btn = 0x0;
+	__asm {
+		mov ecx, pButton
+		mov edx, EventID
+		push 0
+		push EventID
+		push pGUI
+		push 13
+		push 12
+		push txt
+		push 80
+		push 80
+		call original
+		mov Btn, eax
+	}
+	__asm {
+		push pButton
+		mov ecx, pGUI
+		mov edx, 4
+		CALL Setup
+	}
+	PrintElement(Btn, pGUI, 50, 50);
 }
 
 DWORD SetDialogSize(DWORD Dialog, int x, int y) {
-    DWORD original = 0x4C09E0;
-    __asm {
-        mov ecx, Dialog
-        push y
-        push x
-        call original
-    }
+	DWORD original = 0x4C09E0;
+	__asm {
+		mov ecx, Dialog
+		push y
+		push x
+		call original
+	}
 
 }
 
 void UnknownFunc(DWORD gui) { // Sets element ptr values ( used for later comparisions )
-    DWORD original = 0x4B7550;
-    __asm {
-        mov edx, 0
-        mov ecx, gui
-        call original
-    }
+	DWORD original = 0x4B7550;
+	__asm {
+		mov edx, 0
+		mov ecx, gui
+		call original
+	}
+}
+
+void ConstructGuiElement(DWORD element, int sizeX, int sizeY) {
+	UnknownFunc(element);
+	SetDialogSize(element, sizeX, sizeY);
+	CreateButton(element, "Test", 0x194);
+}
+
+DWORD CreateElementPointer(DWORD otherPtr) {
+	DWORD original = GUIAddress::CreateElement;
+	DWORD Pointer = 0x0;
+	__asm {
+		push 0xC4
+		mov edi, otherPtr
+		mov ebx, otherPtr
+		call original
+		add esp, 0x4
+		mov Pointer, eax
+	}
+
+	return Pointer;
+}
+
+void SetPopupTitle(DWORD firstPtr, DWORD secondPtr, const char* title)
+{
+	DWORD original = 0x498250;
+	__asm {
+		push firstPtr
+		push title
+		mov ecx, secondPtr
+		mov edx, 0
+		mov edi, secondPtr
+
+		call original
+	}
+}
+
+void SetPopupPlacement(DWORD Popup, int x, int y) {
+	DWORD original = 0x455A10;
+	__asm {
+		push y
+		push x
+		mov ecx, Popup
+		call original
+	}
 }
 
 
-    void ConstructGuiElement(DWORD element, int sizeX, int sizeY) {
-        DWORD Pass = 0x4CCBA0;
-        DWORD original = 0x485850;
-        DWORD original1 = 0x491140;
-        UnknownFunc(element);
-        SetDialogSize(element, sizeX, sizeY);
+void SetEventId(DWORD element, UINT EventID) {
+	DWORD original = 0x4B76C0;
+	throw ERROR_UNHANDLED_EXCEPTION;
+	__asm {
 
-        CreateButton(element, "Test", 0x194);
+	}
 
-    }
-
-    DWORD CreateElementPointer(DWORD otherPtr) {
-        DWORD original = GUIAddress::CreateElement;
-        DWORD Pointer = 0x0;
-        __asm {
-            push 0xC4
-            mov edi, otherPtr
-            mov ebx, otherPtr
-            call original
-            add esp, 0x4
-            mov Pointer, eax
-        }
-
-        return Pointer;
-    }
-
-    void SetPopupTitle(DWORD firstPtr, DWORD secondPtr, const char* title)
-    {
-        DWORD original = 0x498250;
-        __asm {
-            push firstPtr
-            push title
-            mov ecx, secondPtr
-            mov edx, 0
-            mov edi, secondPtr
-
-            call original
-        }
-    }
-
-    void SetPopupPlacement(DWORD Popup, int x, int y) {
-        DWORD original = 0x455A10;
-        __asm {
-            push y
-            push x
-            mov ecx, Popup
-            call original
-        }
-    }
-
-
-    void SetEventId(DWORD element, UINT EventID) {
-        DWORD original = 0x4B76C0;
-        throw ERROR_UNHANDLED_EXCEPTION;
-        __asm {
-
-        }
-        
-    }
+}
 
 
 
 
-   void GUI::Dialog::CreatePopup(const std::string& Title, int x, int y, int sizeX, int sizeY) {
+void GUI::Dialog::CreatePopup(const std::string& Title, int x, int y, int sizeX, int sizeY) {
 
-        //*Addresses
-        DWORD* CurrentlySelectedGUIElement = (DWORD*)0x64F5C4;
-        DWORD* GUI_SOMETHING_ID = (DWORD*)0x79CF88;
+	//*Addresses
+	DWORD* CurrentlySelectedGUIElement = (DWORD*)0x64F5C4;
+	DWORD* ActionState = (DWORD*)0x79CF88;
 
-        DWORD ElementContent = CreateElement(0x38);
-        ConstructGuiElement(ElementContent, sizeX, sizeY); // Decorates The GUI element with various labels & buttons depending on what ID is the GuiElement Ptr
+	DWORD ElementContent = CreateElement(0x38);
+	ConstructGuiElement(ElementContent, sizeX, sizeY); // Decorates The GUI element with various labels & buttons depending on what ID is the GuiElement Ptr
 
-        DWORD GuiBox = CreateElementPointer(ElementContent); // Create a GuiBox from the template...
+	DWORD GuiBox = CreateElementPointer(ElementContent); // Create a GuiBox from the template...
 
-        SetPopupTitle(ElementContent, GuiBox, Title.c_str());
+	SetPopupTitle(ElementContent, GuiBox, Title.c_str());
 
-        *CurrentlySelectedGUIElement = GuiBox;
+	*CurrentlySelectedGUIElement = GuiBox;
 
-        SetPopupPlacement(GuiBox, x, y);
+	SetPopupPlacement(GuiBox, x, y);
 
-        *GUI_SOMETHING_ID = 11;
+	*ActionState = 11;
 
-    }
-   /* END GUI Regarding Dialogs */
+}
+/* END GUI Regarding Dialogs */
 
 
 
-   /* GUI Essentials */
-   
-   Position* Tibia::GetCenterOfWindow() {
+/* GUI Essentials */
 
-       int x = *(int*)(Client::BaseAddress + 0x39CF80);
-       int y = *(int*)(Client::BaseAddress + 0x39CF7C);
+Position* Tibia::GetCenterOfWindow() {
 
-       Position* pos = new Position(x/2, y/2, 0);
+	int x = *(int*)(Client::BaseAddress + 0x39CF80);
+	int y = *(int*)(Client::BaseAddress + 0x39CF7C);
 
-       return pos;
-   }
-   
-   /* END GUI Essentials */ 
+	Position* pos = new Position(x / 2, y / 2, 0);
+
+	return pos;
+}
+
+/* END GUI Essentials */

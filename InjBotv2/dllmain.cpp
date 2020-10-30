@@ -8,7 +8,8 @@
 DWORD WINAPI InjectThread(HMODULE hModule) {
 
     enable_hooks();
-    int y = 100;
+    auto HeaderPrint = new Print("InjBot 2.0", 100, 100, 50, 50, 250, 1);
+
     while (true) {
         if (GetAsyncKeyState(VK_NUMPAD2) & 1) {
             GUI::Chat::OpenChannel("InjBotV2", 0x64);
